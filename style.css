@@ -290,6 +290,18 @@ button#confirmReturnBtn:hover {
   }
 
   button#submitRating {
-    font-size: 14px;
-  }
+  background-color: #28a745; /* Hijau */
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button#submitRating:hover {
+  background-color: #218838; /* Hijau lebih gelap */
+  transform: translateY(-2px); /* Efek naik saat hover */
+}
 }
