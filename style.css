@@ -289,7 +289,8 @@ button#confirmReturnBtn:hover {
     height: 80px;
   }
 
-  button#submitRating {
+  button#submitRating,
+button#submitComment {
   background-color: #28a745; /* Hijau */
   color: white;
   border: none;
@@ -300,8 +301,10 @@ button#confirmReturnBtn:hover {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-button#submitRating:hover {
+button#submitRating:hover,
+button#submitComment:hover {
   background-color: #218838; /* Hijau lebih gelap */
   transform: translateY(-2px); /* Efek naik saat hover */
 }
+
 }
