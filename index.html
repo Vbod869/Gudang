@@ -4,7 +4,96 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistem Gudang</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Gaya umum untuk notifikasi */
+    .notification {
+      padding: 10px;
+      border-radius: 5px;
+      color: #fff; /* Teks berwarna putih */
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: none; /* Awalnya tidak ditampilkan */
+    }
+
+    .notification.show {
+      display: block;
+    }
+
+    .notification.success {
+      background-color: #4CAF50; /* Hijau */
+    }
+
+    .notification.warning {
+      background-color: #FFEB3B; /* Kuning */
+      color: #000; /* Teks berwarna hitam untuk kontras */
+    }
+
+    .notification.rating-success {
+      background-color: #4CAF50; /* Hijau */
+    }
+
+    .modal {
+      display: none; /* Modal tersembunyi secara default */
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .form-container, .table-container, .rating-container {
+      margin-top: 20px;
+    }
+
+    .rating {
+      margin-bottom: 10px;
+    }
+
+    .rating input {
+      display: none;
+    }
+
+    .rating label {
+      font-size: 24px;
+      color: #ddd;
+      cursor: pointer;
+    }
+
+    .rating input:checked ~ label {
+      color: #FFD700;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -88,160 +177,153 @@
   </div>
   
   <script>
-      let currentItemName = '';
-let currentItemQuantity = 0;
-let currentRow;  // Menyimpan referensi ke baris saat item dikembalikan
+    let currentItemName = '';
+    let currentItemQuantity = 0;
+    let currentRow;  // Menyimpan referensi ke baris saat item dikembalikan
 
-document.getElementById("inventoryForm").addEventListener("submit", function(event) {
-  event.preventDefault();
+    document.getElementById("inventoryForm").addEventListener("submit", function(event) {
+      event.preventDefault();
 
-  // Mendapatkan nilai input
-  const itemName = document.getElementById("itemName").value;
-  const itemQuantity = document.getElementById("itemQuantity").value;
+      // Mendapatkan nilai input
+      const itemName = document.getElementById("itemName").value;
+      const itemQuantity = document.getElementById("itemQuantity").value;
 
-  // Menambahkan item ke tabel
-  const table = document.getElementById("inventoryTable").getElementsByTagName("tbody")[0];
-  const newRow = table.insertRow();
+      // Menambahkan item ke tabel
+      const table = document.getElementById("inventoryTable").getElementsByTagName("tbody")[0];
+      const newRow = table.insertRow();
 
-  // Membuat kolom untuk nama barang dan jumlah
-  const nameCell = newRow.insertCell(0);
-  const quantityCell = newRow.insertCell(1);
-  const actionCell = newRow.insertCell(2);
+      // Membuat kolom untuk nama barang dan jumlah
+      const nameCell = newRow.insertCell(0);
+      const quantityCell = newRow.insertCell(1);
+      const actionCell = newRow.insertCell(2);
 
-  nameCell.textContent = itemName;
-  quantityCell.textContent = itemQuantity;
+      nameCell.textContent = itemName;
+      quantityCell.textContent = itemQuantity;
 
-  // Tombol hapus
-  const deleteButton = document.createElement("button");
-  deleteButton.textContent = "Hapus";
-  deleteButton.classList.add("delete-btn");
-  deleteButton.addEventListener("click", function() {
-    table.deleteRow(newRow.rowIndex - 1);
-    showNotification("Barang dihapus dari daftar!");
-  });
+      // Tombol hapus
+      const deleteButton = document.createElement("button");
+      deleteButton.textContent = "Hapus";
+      deleteButton.classList.add("delete-btn");
+      deleteButton.addEventListener("click", function() {
+        table.deleteRow(newRow.rowIndex - 1);
+        showNotification("Barang dihapus dari daftar!", "warning");
+      });
 
-  // Tombol return
-  const returnButton = document.createElement("button");
-  returnButton.textContent = "Return";
-  returnButton.classList.add("return-btn");
-  returnButton.addEventListener("click", function() {
-    currentItemName = itemName;
-    currentItemQuantity = itemQuantity;
-    currentRow = newRow; // Simpan referensi ke baris yang akan dihapus
-    showModal();
-  });
+      // Tombol return
+      const returnButton = document.createElement("button");
+      returnButton.textContent = "Return";
+      returnButton.classList.add("return-btn");
+      returnButton.addEventListener("click", function() {
+        currentItemName = itemName;
+        currentItemQuantity = itemQuantity;
+        currentRow = newRow; // Simpan referensi ke baris yang akan dihapus
+        showModal();
+      });
 
-  actionCell.appendChild(deleteButton);
-  actionCell.appendChild(returnButton);
+      actionCell.appendChild(deleteButton);
+      actionCell.appendChild(returnButton);
 
-  // Reset form
-  document.getElementById("inventoryForm").reset();
+      // Reset form
+      document.getElementById("inventoryForm").reset();
 
-  // Tampilkan notifikasi
-  showNotification("Barang berhasil ditambahkan!");
-});
+      // Tampilkan notifikasi
+      showNotification("Barang berhasil ditambahkan!", "success");
+    });
 
-// Fungsi untuk mengembalikan barang rusak
-function returnItem(itemName, itemQuantity, reason) {
-  const returnTable = document.getElementById("returnedItemsTable").getElementsByTagName("tbody")[0];
-  const newRow = returnTable.insertRow();
+    // Fungsi untuk mengembalikan barang rusak
+    function returnItem(itemName, itemQuantity, reason) {
+      const returnTable = document.getElementById("returnedItemsTable").getElementsByTagName("tbody")[0];
+      const newRow = returnTable.insertRow();
 
-  const nameCell = newRow.insertCell(0);
-  const quantityCell = newRow.insertCell(1);
-  const reasonCell = newRow.insertCell(2);
+      const nameCell = newRow.insertCell(0);
+      const quantityCell = newRow.insertCell(1);
+      const reasonCell = newRow.insertCell(2);
 
-  nameCell.textContent = itemName;
-  quantityCell.textContent = itemQuantity;
-  reasonCell.textContent = reason;
+      nameCell.textContent = itemName;
+      quantityCell.textContent = itemQuantity;
+      reasonCell.textContent = reason;
 
-  // Hapus item dari tabel inventaris
-  currentRow.remove();
-}
+      // Hapus item dari tabel inventaris
+      currentRow.remove();
+    }
 
-// Fungsi untuk menampilkan notifikasi
-function showNotification(message) {
-  const notification = document.getElementById("notification");
-  const notificationMessage = document.getElementById("notificationMessage");
+    // Fungsi untuk menampilkan notifikasi
+    function showNotification(message, type) {
+      const notification = document.getElementById("notification");
+      const notificationMessage = document.getElementById("notificationMessage");
 
-  // Setel pesan notifikasi
-  notificationMessage.textContent = message;
+      // Setel pesan notifikasi
+      notificationMessage.textContent = message;
 
-  // Tampilkan notifikasi
-  notification.classList.add("show");
+      // Atur class notifikasi sesuai jenis
+      notification.className = `notification ${type} show`;
 
-  // Hilangkan notifikasi setelah 3 detik
-  setTimeout(() => {
-    notification.classList.add("hide");
-    setTimeout(() => {
-      notification.classList.remove("show", "hide");
-    }, 500); // Durasi fade-out (0.5 detik)
-  }, 3000); // Durasi tampilan notifikasi (3 detik)
-}
+      // Hilangkan notifikasi setelah 3 detik
+      setTimeout(() => {
+        notification.classList.remove("show");
+      }, 3000); // Durasi tampilan notifikasi (3 detik)
+    }
 
-// Modal control
-const modal = document.getElementById("returnModal");
-const closeModal = document.querySelector(".close");
-const confirmReturnBtn = document.getElementById("confirmReturnBtn");
+    // Modal control
+    const modal = document.getElementById("returnModal");
+    const closeModal = document.querySelector(".close");
+    const confirmReturnBtn = document.getElementById("confirmReturnBtn");
 
-function showModal() {
-  modal.style.display = "block";
-}
+    function showModal() {
+      modal.style.display = "block";
+    }
 
-function hideModal() {
-  modal.style.display = "none";
-}
+    function hideModal() {
+      modal.style.display = "none";
+    }
 
-closeModal.onclick = function() {
-  hideModal();
-};
+    closeModal.onclick = function() {
+      hideModal();
+    };
 
-window.onclick = function(event) {
-  if (event.target == modal) {
-    hideModal();
-  }
-};
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        hideModal();
+      }
+    };
 
-confirmReturnBtn.onclick = function() {
-  const returnReason = document.getElementById("returnReason").value;
-  if (returnReason.trim() !== "") {
-    returnItem(currentItemName, currentItemQuantity, returnReason);
-    hideModal();
-    showNotification("Barang dikembalikan dengan alasan: " + returnReason);
-  } else {
-    alert("Alasan pengembalian tidak boleh kosong!");
-  }
-};
+    confirmReturnBtn.onclick = function() {
+      const returnReason = document.getElementById("returnReason").value;
+      if (returnReason.trim() !== "") {
+        returnItem(currentItemName, currentItemQuantity, returnReason);
+        hideModal();
+        showNotification("Barang dikembalikan dengan alasan: " + returnReason, "warning");
+      } else {
+        alert("Alasan pengembalian tidak boleh kosong!");
+      }
+    };
 
-document.getElementById("submitRating").addEventListener("click", function() {
-  // Mendapatkan rating
-  const rating = document.querySelector('input[name="rating"]:checked');
-  
-  // Mendapatkan komentar
-  const comment = document.getElementById("userComment").value;
+    document.getElementById("submitRating").addEventListener("click", function() {
+      // Mendapatkan rating
+      const rating = document.querySelector('input[name="rating"]:checked');
+      
+      // Mendapatkan komentar
+      const comment = document.getElementById("userComment").value;
 
-  if (rating && comment.trim() !== "") {
-    // Menampilkan hasil rating dan komentar
-    const feedbackResult = document.getElementById("feedbackResult");
-    feedbackResult.innerHTML = `
-      <h3>Terima kasih atas umpan balik Anda!</h3>
-      <p>Rating: ${rating.value}/5</p>
-      <p>Komentar: ${comment}</p>
-    `;
-    
-    // Reset form
-    document.getElementById("userComment").value = "";
-    document.querySelector('input[name="rating"]:checked').checked = false;
-    
-    // Tampilkan notifikasi
-    showNotification("Terima kasih atas umpan balik Anda!");
-  } else {
-    alert("Mohon berikan rating dan komentar sebelum mengirim!");
-  }
-});
-
-
+      if (rating && comment.trim() !== "") {
+        // Menampilkan hasil rating dan komentar
+        const feedbackResult = document.getElementById("feedbackResult");
+        feedbackResult.innerHTML = `
+          <h3>Terima kasih atas umpan balik Anda!</h3>
+          <p>Rating: ${rating.value}/5</p>
+          <p>Komentar: ${comment}</p>
+        `;
+        
+        // Reset form
+        document.getElementById("userComment").value = "";
+        document.querySelector('input[name="rating"]:checked').checked = false;
+        
+        // Tampilkan notifikasi
+        showNotification("Terima kasih atas umpan balik Anda!", "rating-success");
+      } else {
+        alert("Mohon berikan rating dan komentar sebelum mengirim!");
+      }
+    });
   </script>
-  
-  <script src="script.js"></script>
 </body>
 </html>
