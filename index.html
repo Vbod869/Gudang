@@ -60,16 +60,16 @@
     <div class="rating-container">
       <h2>Seberapa puas Anda dengan aplikasi ini?</h2>
       <div class="rating">
-        <input type="radio" id="star1" name="rating" value="5">
-        <label for="star1" title="1 star">&#9733;</label>
-        <input type="radio" id="star2" name="rating" value="4">
-        <label for="star2" title="2 stars">&#9733;</label>
+        <input type="radio" id="star5" name="rating" value="5">
+        <label for="star5" title="5 stars">&#9733;</label>
+        <input type="radio" id="star4" name="rating" value="4">
+        <label for="star4" title="4 stars">&#9733;</label>
         <input type="radio" id="star3" name="rating" value="3">
         <label for="star3" title="3 stars">&#9733;</label>
-        <input type="radio" id="star4" name="rating" value="2">
-        <label for="star4" title="4 stars">&#9733;</label>
-        <input type="radio" id="star5" name="rating" value="1">
-        <label for="star5" title="5 stars">&#9733;</label>
+        <input type="radio" id="star2" name="rating" value="2">
+        <label for="star2" title="2 stars">&#9733;</label>
+        <input type="radio" id="star1" name="rating" value="1">
+        <label for="star1" title="1 star">&#9733;</label>
       </div>
       <textarea id="userComment" placeholder="Tuliskan komentar Anda..."></textarea>
       <button id="submitRating">Kirim Rating & Komentar</button>
@@ -88,7 +88,158 @@
   </div>
   
   <script>
-    // JavaScript Anda di sini
+      let currentItemName = '';
+let currentItemQuantity = 0;
+let currentRow;  // Menyimpan referensi ke baris saat item dikembalikan
+
+document.getElementById("inventoryForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  // Mendapatkan nilai input
+  const itemName = document.getElementById("itemName").value;
+  const itemQuantity = document.getElementById("itemQuantity").value;
+
+  // Menambahkan item ke tabel
+  const table = document.getElementById("inventoryTable").getElementsByTagName("tbody")[0];
+  const newRow = table.insertRow();
+
+  // Membuat kolom untuk nama barang dan jumlah
+  const nameCell = newRow.insertCell(0);
+  const quantityCell = newRow.insertCell(1);
+  const actionCell = newRow.insertCell(2);
+
+  nameCell.textContent = itemName;
+  quantityCell.textContent = itemQuantity;
+
+  // Tombol hapus
+  const deleteButton = document.createElement("button");
+  deleteButton.textContent = "Hapus";
+  deleteButton.classList.add("delete-btn");
+  deleteButton.addEventListener("click", function() {
+    table.deleteRow(newRow.rowIndex - 1);
+    showNotification("Barang dihapus dari daftar!");
+  });
+
+  // Tombol return
+  const returnButton = document.createElement("button");
+  returnButton.textContent = "Return";
+  returnButton.classList.add("return-btn");
+  returnButton.addEventListener("click", function() {
+    currentItemName = itemName;
+    currentItemQuantity = itemQuantity;
+    currentRow = newRow; // Simpan referensi ke baris yang akan dihapus
+    showModal();
+  });
+
+  actionCell.appendChild(deleteButton);
+  actionCell.appendChild(returnButton);
+
+  // Reset form
+  document.getElementById("inventoryForm").reset();
+
+  // Tampilkan notifikasi
+  showNotification("Barang berhasil ditambahkan!");
+});
+
+// Fungsi untuk mengembalikan barang rusak
+function returnItem(itemName, itemQuantity, reason) {
+  const returnTable = document.getElementById("returnedItemsTable").getElementsByTagName("tbody")[0];
+  const newRow = returnTable.insertRow();
+
+  const nameCell = newRow.insertCell(0);
+  const quantityCell = newRow.insertCell(1);
+  const reasonCell = newRow.insertCell(2);
+
+  nameCell.textContent = itemName;
+  quantityCell.textContent = itemQuantity;
+  reasonCell.textContent = reason;
+
+  // Hapus item dari tabel inventaris
+  currentRow.remove();
+}
+
+// Fungsi untuk menampilkan notifikasi
+function showNotification(message) {
+  const notification = document.getElementById("notification");
+  const notificationMessage = document.getElementById("notificationMessage");
+
+  // Setel pesan notifikasi
+  notificationMessage.textContent = message;
+
+  // Tampilkan notifikasi
+  notification.classList.add("show");
+
+  // Hilangkan notifikasi setelah 3 detik
+  setTimeout(() => {
+    notification.classList.add("hide");
+    setTimeout(() => {
+      notification.classList.remove("show", "hide");
+    }, 500); // Durasi fade-out (0.5 detik)
+  }, 3000); // Durasi tampilan notifikasi (3 detik)
+}
+
+// Modal control
+const modal = document.getElementById("returnModal");
+const closeModal = document.querySelector(".close");
+const confirmReturnBtn = document.getElementById("confirmReturnBtn");
+
+function showModal() {
+  modal.style.display = "block";
+}
+
+function hideModal() {
+  modal.style.display = "none";
+}
+
+closeModal.onclick = function() {
+  hideModal();
+};
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    hideModal();
+  }
+};
+
+confirmReturnBtn.onclick = function() {
+  const returnReason = document.getElementById("returnReason").value;
+  if (returnReason.trim() !== "") {
+    returnItem(currentItemName, currentItemQuantity, returnReason);
+    hideModal();
+    showNotification("Barang dikembalikan dengan alasan: " + returnReason);
+  } else {
+    alert("Alasan pengembalian tidak boleh kosong!");
+  }
+};
+
+document.getElementById("submitRating").addEventListener("click", function() {
+  // Mendapatkan rating
+  const rating = document.querySelector('input[name="rating"]:checked');
+  
+  // Mendapatkan komentar
+  const comment = document.getElementById("userComment").value;
+
+  if (rating && comment.trim() !== "") {
+    // Menampilkan hasil rating dan komentar
+    const feedbackResult = document.getElementById("feedbackResult");
+    feedbackResult.innerHTML = `
+      <h3>Terima kasih atas umpan balik Anda!</h3>
+      <p>Rating: ${rating.value}/5</p>
+      <p>Komentar: ${comment}</p>
+    `;
+    
+    // Reset form
+    document.getElementById("userComment").value = "";
+    document.querySelector('input[name="rating"]:checked').checked = false;
+    
+    // Tampilkan notifikasi
+    showNotification("Terima kasih atas umpan balik Anda!");
+  } else {
+    alert("Mohon berikan rating dan komentar sebelum mengirim!");
+  }
+});
+
+
   </script>
   
   <script src="script.js"></script>
