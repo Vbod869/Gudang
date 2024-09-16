@@ -4,303 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistem Gudang</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Arial', sans-serif;
-    }
-
-    body {
-      background-color: #f0f2f5;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      height: 100vh;
-      padding: 20px;
-      overflow: auto; /* Pastikan scroll diaktifkan */
-    }
-
-    .container {
-      background-color: #ffffff;
-      border-radius: 12px; /* Lebih membulat untuk tampilan mewah */
-      padding: 40px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Shadow yang lebih besar */
-      max-width: 800px;
-      width: 100%;
-      overflow: auto; /* Pastikan container dapat di-scroll */
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-      font-size: 2rem; /* Ukuran font yang lebih besar */
-    }
-
-    .form-container {
-      margin-bottom: 40px; /* Jarak lebih besar */
-    }
-
-    h2 {
-      font-size: 1.75rem; /* Ukuran font yang lebih besar */
-      margin-bottom: 15px;
-      color: #007bff;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-    }
-
-    form input {
-      margin-bottom: 20px;
-      padding: 14px;
-      font-size: 16px;
-      border: 1px solid #ddd;
-      border-radius: 8px; /* Lebih membulat */
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    form input:focus {
-      border-color: #007bff;
-      outline: none;
-      box-shadow: 0 0 8px rgba(0, 123, 255, 0.25); /* Shadow saat focus */
-    }
-
-    form button {
-      padding: 14px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-    form button:hover {
-      background-color: #0056b3;
-      transform: translateY(-2px); /* Efek naik saat hover */
-    }
-
-    .table-container {
-      margin-top: 30px; /* Jarak yang lebih besar */
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: #f9f9f9;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    table th, table td {
-      padding: 20px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-
-    table th {
-      background-color: #007bff;
-      color: white;
-      font-size: 1.1rem; /* Ukuran font yang lebih besar untuk header */
-    }
-
-    table tr:hover {
-      background-color: #f1f1f1;
-    }
-
-    button.delete-btn, button.return-btn {
-      background-color: #dc3545;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      margin-right: 5px;
-    }
-
-    button.delete-btn:hover {
-      background-color: #c82333;
-      transform: translateY(-2px); /* Efek naik saat hover */
-    }
-
-    button.return-btn {
-      background-color: #ffc107;
-    }
-
-    button.return-btn:hover {
-      background-color: #e0a800;
-      transform: translateY(-2px); /* Efek naik saat hover */
-    }
-
-    /* Notifikasi */
-    .notification {
-      visibility: hidden;
-      background-color: #007bff;
-      color: white;
-      text-align: center;
-      padding: 16px;
-      position: fixed;
-      z-index: 1;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      border-radius: 8px;
-      font-size: 16px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-      transition: visibility 0s, opacity 0.5s ease;
-    }
-
-    .notification.show {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    .notification.hide {
-      visibility: hidden;
-      opacity: 0;
-    }
-
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 2;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      overflow: auto; /* Pastikan modal dapat di-scroll jika diperlukan */
-    }
-
-    .modal-content {
-      background-color: #fff;
-      margin: 10% auto;
-      padding: 30px;
-      border-radius: 12px;
-      width: 80%;
-      max-width: 500px;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-size: 16px;
-      resize: vertical; /* Memungkinkan resize vertikal */
-    }
-
-    button#confirmReturnBtn {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-    button#confirmReturnBtn:hover {
-      background-color: #218838;
-      transform: translateY(-2px); /* Efek naik saat hover */
-    }
-
-    .close {
-      float: right;
-      font-size: 24px;
-      cursor: pointer;
-    }
-
-    /* Rating Container */
-    .rating-container {
-      margin-top: 40px;
-    }
-
-    .rating-container h2 {
-      margin-bottom: 20px;
-      font-size: 1.5rem; /* Ukuran font yang lebih besar */
-    }
-
-    .rating {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 10px;
-    }
-
-    .rating input {
-      display: none; /* Sembunyikan input radio */
-    }
-
-    .rating label {
-      font-size: 2.5rem; /* Ukuran bintang yang lebih besar */
-      color: #ddd; /* Warna bintang sebelum dipilih */
-      cursor: pointer;
-      margin: 0 5px;
-      transition: color 0.3s ease; /* Transisi warna */
-    }
-
-    .rating label:hover,
-    .rating label:hover ~ label {
-      color: #ffc107; /* Warna bintang saat hover */
-    }
-
-    .rating input:checked ~ label {
-      color: #ffc107; /* Warna bintang saat dipilih */
-    }
-
-    /* Responsiveness */
-    @media (max-width: 768px) {
-      .container {
-        padding: 20px;
-      }
-
-      form input, form button {
-        font-size: 14px;
-        padding: 10px;
-      }
-
-      table th, table td {
-        font-size: 14px;
-        padding: 10px;
-      }
-
-      button.delete-btn, button.return-btn {
-        font-size: 12px;
-        padding: 8px 12px;
-      }
-
-      .notification {
-        font-size: 14px;
-        padding: 12px;
-      }
-
-      .rating label {
-        font-size: 2rem; /* Ukuran bintang lebih kecil di layar kecil */
-      }
-
-      textarea {
-        margin-top: 20px;
-        height: 80px;
-      }
-
-      button#submitRating {
-        font-size: 14px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
@@ -315,7 +19,7 @@
       <h2>Tambah Barang</h2>
       <form id="inventoryForm">
         <input type="text" id="itemName" placeholder="Nama Barang" required>
-        <input type="number" id="itemQuantity" placeholder="Jumlah" min="1" required>
+        <input type="number" id="itemQuantity" placeholder="Jumlah" required>
         <button type="submit">Tambah Barang</button>
       </form>
     </div>
@@ -331,162 +35,213 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Data akan diisi oleh JavaScript -->
+          <!-- Item akan ditambahkan di sini -->
         </tbody>
       </table>
     </div>
 
-    <!-- Modal -->
-    <div id="returnModal" class="modal">
-      <div class="modal-content">
-        <span class="close" id="closeModal">&times;</span>
-        <h2>Kembalikan Barang</h2>
-        <textarea id="returnReason" placeholder="Alasan Pengembalian" required></textarea>
-        <button id="confirmReturnBtn">Konfirmasi Pengembalian</button>
-      </div>
+    <div class="table-container">
+      <h2>Barang Rusak</h2>
+      <table id="returnedItemsTable">
+        <thead>
+          <tr>
+            <th>Nama Barang</th>
+            <th>Jumlah</th>
+            <th>Alasan Return</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Barang rusak akan ditambahkan di sini -->
+        </tbody>
+      </table>
     </div>
-
+    
+    <!-- Rating & Komentar -->
     <div class="rating-container">
-      <h2>Rating dan Umpan Balik</h2>
-      <form id="ratingForm">
-        <div class="rating">
-          <input type="radio" id="rating5" name="rating" value="5">
-          <label for="rating5">&#9733;</label>
-          <input type="radio" id="rating4" name="rating" value="4">
-          <label for="rating4">&#9733;</label>
-          <input type="radio" id="rating3" name="rating" value="3">
-          <label for="rating3">&#9733;</label>
-          <input type="radio" id="rating2" name="rating" value="2">
-          <label for="rating2">&#9733;</label>
-          <input type="radio" id="rating1" name="rating" value="1">
-          <label for="rating1">&#9733;</label>
-        </div>
-        <textarea id="userComment" placeholder="Komentar" required></textarea>
-        <button type="button" id="submitRating">Kirim Umpan Balik</button>
-      </form>
+      <h2>Seberapa puas Anda dengan aplikasi ini?</h2>
+      <div class="rating">
+        <input type="radio" id="star5" name="rating" value="5">
+        <label for="star5" title="5 stars">&#9733;</label>
+        <input type="radio" id="star4" name="rating" value="4">
+        <label for="star4" title="4 stars">&#9733;</label>
+        <input type="radio" id="star3" name="rating" value="3">
+        <label for="star3" title="3 stars">&#9733;</label>
+        <input type="radio" id="star2" name="rating" value="2">
+        <label for="star2" title="2 stars">&#9733;</label>
+        <input type="radio" id="star1" name="rating" value="1">
+        <label for="star1" title="1 star">&#9733;</label>
+      </div>
+      <textarea id="userComment" placeholder="Tuliskan komentar Anda..."></textarea>
+      <button id="submitRating">Kirim Rating & Komentar</button>
       <div id="feedbackResult"></div>
     </div>
   </div>
 
+  <!-- Modal Alasan Return -->
+  <div id="returnModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Masukkan Alasan Pengembalian</h2>
+      <textarea id="returnReason" rows="4" placeholder="Alasan pengembalian barang..."></textarea>
+      <button id="confirmReturnBtn">Konfirmasi Return</button>
+    </div>
+  </div>
+  
   <script>
-    let inventory = [];
+      let currentItemName = '';
+let currentItemQuantity = 0;
+let currentRow;  // Menyimpan referensi ke baris saat item dikembalikan
 
-    function showNotification(message, type) {
-      const notification = document.getElementById("notification");
-      const notificationMessage = document.getElementById("notificationMessage");
-      notificationMessage.textContent = message;
-      notification.className = `notification show ${type}`;
-      setTimeout(() => {
-        notification.className = `notification hide ${type}`;
-      }, 3000);
-    }
+document.getElementById("inventoryForm").addEventListener("submit", function(event) {
+  event.preventDefault();
 
-    function updateTable() {
-      const tableBody = document.querySelector("#inventoryTable tbody");
-      tableBody.innerHTML = "";
-      inventory.forEach((item, index) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${item.name}</td>
-          <td>${item.quantity}</td>
-          <td>
-            <button class="delete-btn" onclick="removeItem(${index})">Hapus</button>
-            <button class="return-btn" onclick="openReturnModal('${item.name}', ${item.quantity})">Kembalikan</button>
-          </td>
-        `;
-        tableBody.appendChild(row);
-      });
-    }
+  // Mendapatkan nilai input
+  const itemName = document.getElementById("itemName").value;
+  const itemQuantity = document.getElementById("itemQuantity").value;
 
-    function addItem(name, quantity) {
-      inventory.push({ name, quantity });
-      updateTable();
-      showNotification("Barang berhasil ditambahkan!", "success");
-    }
+  // Menambahkan item ke tabel
+  const table = document.getElementById("inventoryTable").getElementsByTagName("tbody")[0];
+  const newRow = table.insertRow();
 
-    function removeItem(index) {
-      inventory.splice(index, 1);
-      updateTable();
-      showNotification("Barang berhasil dihapus!", "error");
-    }
+  // Membuat kolom untuk nama barang dan jumlah
+  const nameCell = newRow.insertCell(0);
+  const quantityCell = newRow.insertCell(1);
+  const actionCell = newRow.insertCell(2);
 
-    function openReturnModal(name, quantity) {
-      currentItemName = name;
-      currentItemQuantity = quantity;
-      const modal = document.getElementById("returnModal");
-      modal.style.display = "block";
-    }
+  nameCell.textContent = itemName;
+  quantityCell.textContent = itemQuantity;
 
-    function hideModal() {
-      const modal = document.getElementById("returnModal");
-      modal.style.display = "none";
-    }
+  // Tombol hapus
+  const deleteButton = document.createElement("button");
+  deleteButton.textContent = "Hapus";
+  deleteButton.classList.add("delete-btn");
+  deleteButton.addEventListener("click", function() {
+    table.deleteRow(newRow.rowIndex - 1);
+    showNotification("Barang dihapus dari daftar!");
+  });
 
-    function returnItem(name, quantity, reason) {
-      // Logika untuk pengembalian barang
-      showNotification(`Barang ${name} dikembalikan dengan alasan: ${reason}`, "warning");
-    }
+  // Tombol return
+  const returnButton = document.createElement("button");
+  returnButton.textContent = "Return";
+  returnButton.classList.add("return-btn");
+  returnButton.addEventListener("click", function() {
+    currentItemName = itemName;
+    currentItemQuantity = itemQuantity;
+    currentRow = newRow; // Simpan referensi ke baris yang akan dihapus
+    showModal();
+  });
 
-    const form = document.getElementById("inventoryForm");
-    form.addEventListener("submit", function(event) {
-      event.preventDefault();
-      const itemName = document.getElementById("itemName").value;
-      const itemQuantity = document.getElementById("itemQuantity").value;
-      addItem(itemName, itemQuantity);
-      form.reset();
-    });
+  actionCell.appendChild(deleteButton);
+  actionCell.appendChild(returnButton);
 
-    const modal = document.getElementById("returnModal");
-    const closeModal = document.getElementById("closeModal");
-    const confirmReturnBtn = document.getElementById("confirmReturnBtn");
+  // Reset form
+  document.getElementById("inventoryForm").reset();
 
-    closeModal.onclick = function() {
-      hideModal();
-    };
+  // Tampilkan notifikasi
+  showNotification("Barang berhasil ditambahkan!");
+});
 
-    window.onclick = function(event) {
-      if (event.target == modal) {
-        hideModal();
-      }
-    };
+// Fungsi untuk mengembalikan barang rusak
+function returnItem(itemName, itemQuantity, reason) {
+  const returnTable = document.getElementById("returnedItemsTable").getElementsByTagName("tbody")[0];
+  const newRow = returnTable.insertRow();
 
-    confirmReturnBtn.onclick = function() {
-      const returnReason = document.getElementById("returnReason").value;
-      if (returnReason.trim() !== "") {
-        returnItem(currentItemName, currentItemQuantity, returnReason);
-        hideModal();
-        showNotification("Barang dikembalikan dengan alasan: " + returnReason, "warning");
-      } else {
-        alert("Alasan pengembalian tidak boleh kosong!");
-      }
-    };
+  const nameCell = newRow.insertCell(0);
+  const quantityCell = newRow.insertCell(1);
+  const reasonCell = newRow.insertCell(2);
 
-    document.getElementById("submitRating").addEventListener("click", function() {
-      // Mendapatkan rating
-      const rating = document.querySelector('input[name="rating"]:checked');
-      
-      // Mendapatkan komentar
-      const comment = document.getElementById("userComment").value;
+  nameCell.textContent = itemName;
+  quantityCell.textContent = itemQuantity;
+  reasonCell.textContent = reason;
 
-      if (rating && comment.trim() !== "") {
-        // Menampilkan hasil rating dan komentar
-        const feedbackResult = document.getElementById("feedbackResult");
-        feedbackResult.innerHTML = `
-          <h3>Terima kasih atas umpan balik Anda!</h3>
-          <p>Rating: ${rating.value}/5</p>
-          <p>Komentar: ${comment}</p>
-        `;
-        
-        // Reset form
-        document.getElementById("userComment").value = "";
-        document.querySelector('input[name="rating"]:checked').checked = false;
-        
-        // Tampilkan notifikasi
-        showNotification("Terima kasih atas umpan balik Anda!", "rating-success");
-      } else {
-        alert("Mohon berikan rating dan komentar sebelum mengirim!");
-      }
-    });
+  // Hapus item dari tabel inventaris
+  currentRow.remove();
+}
+
+// Fungsi untuk menampilkan notifikasi
+function showNotification(message) {
+  const notification = document.getElementById("notification");
+  const notificationMessage = document.getElementById("notificationMessage");
+
+  // Setel pesan notifikasi
+  notificationMessage.textContent = message;
+
+  // Tampilkan notifikasi
+  notification.classList.add("show");
+
+  // Hilangkan notifikasi setelah 3 detik
+  setTimeout(() => {
+    notification.classList.add("hide");
+    setTimeout(() => {
+      notification.classList.remove("show", "hide");
+    }, 500); // Durasi fade-out (0.5 detik)
+  }, 3000); // Durasi tampilan notifikasi (3 detik)
+}
+
+// Modal control
+const modal = document.getElementById("returnModal");
+const closeModal = document.querySelector(".close");
+const confirmReturnBtn = document.getElementById("confirmReturnBtn");
+
+function showModal() {
+  modal.style.display = "block";
+}
+
+function hideModal() {
+  modal.style.display = "none";
+}
+
+closeModal.onclick = function() {
+  hideModal();
+};
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    hideModal();
+  }
+};
+
+confirmReturnBtn.onclick = function() {
+  const returnReason = document.getElementById("returnReason").value;
+  if (returnReason.trim() !== "") {
+    returnItem(currentItemName, currentItemQuantity, returnReason);
+    hideModal();
+    showNotification("Barang dikembalikan dengan alasan: " + returnReason);
+  } else {
+    alert("Alasan pengembalian tidak boleh kosong!");
+  }
+};
+
+document.getElementById("submitRating").addEventListener("click", function() {
+  // Mendapatkan rating
+  const rating = document.querySelector('input[name="rating"]:checked');
+  
+  // Mendapatkan komentar
+  const comment = document.getElementById("userComment").value;
+
+  if (rating && comment.trim() !== "") {
+    // Menampilkan hasil rating dan komentar
+    const feedbackResult = document.getElementById("feedbackResult");
+    feedbackResult.innerHTML = `
+      <h3>Terima kasih atas umpan balik Anda!</h3>
+      <p>Rating: ${rating.value}/5</p>
+      <p>Komentar: ${comment}</p>
+    `;
+    
+    // Reset form
+    document.getElementById("userComment").value = "";
+    document.querySelector('input[name="rating"]:checked').checked = false;
+    
+    // Tampilkan notifikasi
+    showNotification("Terima kasih atas umpan balik Anda!");
+  } else {
+    alert("Mohon berikan rating dan komentar sebelum mengirim!");
+  }
+});
+
+
   </script>
+  
+  <script src="script.js"></script>
 </body>
 </html>
